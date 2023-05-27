@@ -1,0 +1,3 @@
+[submodule "deps/LuaBridge3"]
+	path = deps/LuaBridge3
+	url = https://github.com/kunitoki/LuaBridge3
