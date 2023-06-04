@@ -3,14 +3,14 @@
 #include <chat_msg_parser/chat_msg_parser.h>
 #include <filesystem>
 #include <ostream>
-#include "midas_types/Window.h"
+#include <wiz_structs/window.h>
 
 struct wad_memory_element_t
 {
     struct wad_memory_file_t
     {
         int64_t wad_pointer;
-        std::string file_name;
+        KI::string file_name;
         const char *file_content; // content of file, see unpacked wad
         int32_t file_size;        // trailing 0x0D0A ?? (this does not include \0)
 
@@ -75,12 +75,12 @@ void hook_read()
 
 bool(__stdcall *WizardGuiManager__InitRootWindow_orig)(int64_t WizardGuiManager);
 
-Window *root_window = nullptr;
+window_t *root_window = nullptr;
 
 bool WizardGuiManager__InitRootWindow_hook(int64_t WizardGuiManager)
 {
     auto current_root_window = WizardGuiManager + 0xD8;
-    root_window = (Window *)(*(uint64_t *)current_root_window);
+    root_window = (window_t *)(*(uint64_t *)current_root_window);
     // root_window->chat_window_test();
     return WizardGuiManager__InitRootWindow_orig(WizardGuiManager);
 }
