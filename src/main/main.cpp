@@ -88,58 +88,6 @@ int init_hooks()
     return 0;
 }
 
-std::wstring s2ws(const std::string &str)
-{
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-    return converterX.from_bytes(str);
-}
-
-std::string ws2s(const std::wstring &wstr)
-{
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-    return converterX.to_bytes(wstr);
-}
-
-namespace luabridge
-{
-
-    template <>
-    struct Stack<std::wstring>
-    {
-        static Result push(lua_State *L, const std::wstring &str)
-        {
-            if (str.empty())
-            {
-                lua_pushliteral(L, "");
-            }
-            else
-            {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                std::string buf = conv.to_bytes(str);
-                lua_pushlstring(L, buf.data(), buf.length());
-            }
-            return {};
-        }
-
-        static std::wstring get(lua_State *L, int index)
-        {
-            size_t len;
-            const char *p = luaL_checklstring(L, index, &len);
-            std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-            return conv.from_bytes(p, p + len);
-        }
-
-        static std::wstring opt(lua_State *L, int index, const std::wstring &def)
-        {
-            return lua_isnoneornil(L, index) ? def : get(L, index);
-        }
-    };
-}
-
 // login: modtest01 modtest01
 
 int main()
@@ -153,20 +101,15 @@ int main()
     lua_pushvalue(L, LUA_GLOBALSINDEX);
     lua_setfield(L, -1, "_G");
 
+    PropertyClass::initialize_lua(L);
+    Window::initialize_lua(L);
+
     luabridge::getGlobalNamespace(L)
-        .beginClass<window_t>("Window")
-        .addFunction("GetName", &window_t::get_name)
-        .addFunction("GetChildren", &window_t::get_children)
-        .addFunction("IsEdit", &window_t::is_edit)
-        .addFunction("IsLabel", &window_t::is_label)
-        //.addFunction("SetText", &window_t::set_text)
-        .addFunction("GetText", &window_t::get_text)
-        .addFunction("GetClassName", &window_t::get_class_name)
-        .addFunction("GetParent", &window_t::get_parent)
-        .endClass()
         .addFunction(
             "GetRootWindow", +[]()
-                             { return root_window; });
+                             { 
+                                printf("Root window is %llx\n", root_window);
+                                return root_window; });
 
     std::string script;
     while (std::getline(std::cin, script))

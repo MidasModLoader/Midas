@@ -1,5 +1,3 @@
-install
+install:
 
-```
-git clone --recursive https://github.com/xgladius/Midas.git
-```
+use dumper and fill src/midas_types

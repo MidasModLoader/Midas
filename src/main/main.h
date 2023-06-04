@@ -4,8 +4,7 @@
 #include <spoofer/hooks/kern32.hpp>
 #include <spoofer/hooks/k32_read.hpp>
 #include <DbgHelp.h>
-#include <locale>
-#include <codecvt>
+#include "midas_types/PropertyClass.h"
 
 int main();
 
