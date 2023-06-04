@@ -13,6 +13,8 @@ add_library(Midas SHARED src/main/main.cpp src/wiz_structs/common.h)
 
 set_target_properties(Midas PROPERTIES OUTPUT_NAME "WizardCommandLineCSR")
 
+target_compile_definitions(Midas PUBLIC _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
+
 target_link_libraries(Midas PRIVATE minhook)
 target_include_directories(Midas PRIVATE ${minhook_INCLUDE_DIRS})
 target_include_directories(Midas PRIVATE src)
